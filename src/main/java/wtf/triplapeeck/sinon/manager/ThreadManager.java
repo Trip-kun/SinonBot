@@ -18,6 +18,20 @@ public class ThreadManager extends Thread {
     private ArrayList<Tuple2<String, Thread>> threads = new ArrayList<>();
     private LinkedBlockingQueue<Tuple2<String, Thread>> threadQueue = new LinkedBlockingQueue<>();
     private boolean requestToEnd = false;
+    private ThreadManager() {
+    }
+    private static ThreadManager instance;
+    /**
+     * Get the instance of the ThreadManager
+     * @return The instance of the ThreadManager
+     */
+    public static ThreadManager getInstance() {
+        if (instance == null) {
+            instance = new ThreadManager();
+        }
+        instance.start();
+        return instance;
+    }
     @Override
     public void run() {
         Logger.log(Logger.Level.INFO, "ThreadManager started");
@@ -47,12 +61,12 @@ public class ThreadManager extends Thread {
                 Logger.log(Logger.Level.INFO, "ThreadManager ended");
                 return;
             }
-            while (threads.size()<=Config.threadLimit && !threadQueue.isEmpty()) {
+            while (threads.size()<=Config.getConfig().threadLimit && !threadQueue.isEmpty()) {
                 Tuple2<String, Thread> thread = threadQueue.poll();
                 threads.add(thread);
             }
             try {
-                sleep(100);
+                sleep(Config.getConfig().threadSleep);
             } catch (InterruptedException ignored) {
             }
         }

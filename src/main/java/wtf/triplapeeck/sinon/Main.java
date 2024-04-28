@@ -20,9 +20,9 @@ public class Main {
     public static void main(String[] args) {
         Logger.setLogLevel(Logger.Level.WARNING);
         JDA api;
-        CommandHandler commandHandler = new CommandHandler(Config.prefix);
+        CommandHandler commandHandler = new CommandHandler(Config.getConfig().prefix);
         SinonListener sinonListener = new SinonListener(commandHandler);
-        api = JDABuilder.createLight("")
+        api = JDABuilder.createLight(Config.getConfig().token)
                 .disableCache(new ArrayList<>(Arrays.asList(CacheFlag.values())))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(sinonListener)

@@ -453,7 +453,7 @@ public abstract class Command {
         for (int i = 0; i < event.getMessage().getMentions().getUsers().size(); i++) {
             users.add(event.getMessage().getMentions().getUsers().get(i).getIdLong());
         }
-        return parseArguments(event.getMessage().getContentRaw().substring(Config.prefix.length()+1+getFirstArgument().name.length()), event.getMessage().getAttachments(), roles, users, channels);
+        return parseArguments(event.getMessage().getContentRaw().substring(Config.getConfig().prefix.length()+1+getFirstArgument().name.length()), event.getMessage().getAttachments(), roles, users, channels);
     }
     protected ArrayList<ParsedArgument> parseArguments(SlashCommandInteractionEvent event) {
         ArrayList<Long> roles = new ArrayList<>();
