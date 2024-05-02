@@ -7,9 +7,11 @@ plugins {
 group = "wtf.triplapeeck"
 version = "alpha-1"
 mainClassName = "wtf.triplapeeck.sinon.Main"
+
 repositories {
     mavenCentral()
 }
+
 jar {
     manifest {
         attributes(
@@ -17,6 +19,11 @@ jar {
         )
     }
 }
+
+shadowJar {
+    archiveFileName = "sinon.jar"
+}
+
 dependencies {
     implementation 'org.reflections:reflections:0.10.2'
     implementation "net.dv8tion:JDA:5.0.0-beta.22"
@@ -29,5 +36,6 @@ dependencies {
 compileJava {
     options.encoding = "UTF-8"
 }
+
 sourceCompatibility = 17
 targetCompatibility = 17
