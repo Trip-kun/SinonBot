@@ -1,38 +1,60 @@
 package wtf.triplapeeck.sinon.manager;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import wtf.triplapeeck.sinon.Config;
 import wtf.triplapeeck.sinon.Logger;
-import wtf.triplapeeck.sinon.entity.AccessibleEntity;
-import wtf.triplapeeck.sinon.entity.ClosableEntity;
+import wtf.triplapeeck.sinon.entity.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class DataManager<T extends AccessibleEntity> implements Runnable {
-    boolean requestToEnd = false;
+    public static DataManager<? extends MemberData> memberDataManager;
+    public static DataManager<? extends ChannelData> channelDataManager;
+    public static DataManager<? extends UserData> userDataManager;
+    public static DataManager<? extends GuildData> guildDataManager;
+    public static DataManager<? extends PlayerCardData> playerCardDataManager;
+    public static DataManager<? extends DeckCardData> deckCardDataManager;
+    public static DataManager<? extends ChannelMemberData> channelMemberDataManager;
+    private AtomicBoolean requestToEnd = new AtomicBoolean(false);
     protected final ArrayList<String> temp = new ArrayList<>();
     protected final ConcurrentHashMap<String, T> dataCache = new ConcurrentHashMap<>();
-    public synchronized void requestToEnd() {
-        requestToEnd = true;
+    public void requestToEnd() {
+        requestToEnd.set(true);
     }
     protected abstract T getRawData(String id);
     public abstract void saveData(String id, boolean remove);
     public abstract void removeData(String id);
     protected abstract List<T> getAllRawData();
+    protected abstract List<T> queryAllRawData(String query, T value);
     public synchronized ClosableEntity<T> getData(String id) {
-        T data;
-        if (dataCache.get(id)==null) {
-            data = getRawData(id);
-            dataCache.put(id, data);
-        } else {
-            data = dataCache.get(id);
-        }
-        return new ClosableEntity<>(data);
+        dataCache.putIfAbsent(id, getRawData(id));
+        return new ClosableEntity<>(dataCache.get(id));
+    }
+    /*
+        * This method is used to get data that is not cached.
+        * This is useful for generating data that doesn't need to be saved, such as temp object to construct a response.
+        * This method should be used sparingly, as it generates a new object every time it is called.
+        * @param id The ID of the data to get
+        * @return The data object
+     */
+    public synchronized T getUncachedData(String id) {
+        return getRawData(id);
     }
     public synchronized List<ClosableEntity<T>> getAllData() {
         List<T> dataList = getAllRawData();
+        List<ClosableEntity<T>> data = new ArrayList<>();
+        for (T d : dataList) {
+            data.add(new ClosableEntity<>(d));
+        }
+        return data;
+    }
+    public synchronized List<ClosableEntity<T>> queryAllData(String query, T value) {
+        List<T> dataList = queryAllRawData(query, value);
         List<ClosableEntity<T>> data = new ArrayList<>();
         for (T d : dataList) {
             data.add(new ClosableEntity<>(d));
@@ -56,7 +78,7 @@ public abstract class DataManager<T extends AccessibleEntity> implements Runnabl
     @Override
     public void run() {
         while (true) {
-            if (requestToEnd) {
+            if (requestToEnd.get()) {
                 while (ThreadManager.getInstance().getState()!= Thread.State.TERMINATED) {
                     try {
                         Thread.sleep(Config.getConfig().threadSleep);

@@ -1,15 +1,12 @@
 package wtf.triplapeeck.sinon.command.essential;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import wtf.triplapeeck.sinon.Config;
+import wtf.triplapeeck.sinon.command.Argument;
 import wtf.triplapeeck.sinon.command.Command;
+import wtf.triplapeeck.sinon.command.ParsedArgument;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Test extends Command {
@@ -33,7 +30,7 @@ public class Test extends Command {
         this.addArgument(new Argument("test14", "m", true, Argument.Type.ATTACHMENT, null));
         this.addArgument(new Argument("test15", "n", true, Argument.Type.TEXT, null));
 
-        LoadCommand(jda);
+        init(jda);
     }
     @Override
     public void handler(MessageReceivedEvent event, JDA jda) {

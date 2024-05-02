@@ -4,13 +4,14 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import wtf.triplapeeck.sinon.Logger;
+import wtf.triplapeeck.sinon.command.Argument;
 import wtf.triplapeeck.sinon.command.Command;
 
 public class Ping extends Command {
 
     public Ping(JDA jda) {
         this.addArgument(new Argument("ping", "", true, Argument.Type.COMMAND, null));
-        LoadCommand(jda);
+        init(jda);
     }
 
     @Override

@@ -2,23 +2,35 @@ package wtf.triplapeeck.sinon;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.checkerframework.checker.units.qual.C;
+import org.reflections.Reflections;
+import wtf.triplapeeck.sinon.command.Command;
 import wtf.triplapeeck.sinon.command.CommandHandler;
+import wtf.triplapeeck.sinon.command.EventConsumer;
+import wtf.triplapeeck.sinon.command.consumer.RakUpdateConsumer;
 import wtf.triplapeeck.sinon.command.essential.Ping;
 import wtf.triplapeeck.sinon.command.essential.Test;
+import wtf.triplapeeck.sinon.database.ORMLiteDatabaseUtil;
+import wtf.triplapeeck.sinon.entity.ormlite.*;
+import wtf.triplapeeck.sinon.manager.DataManager;
+import wtf.triplapeeck.sinon.manager.ORMLiteManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
         Logger.setLogLevel(Logger.Level.WARNING);
+        ORMLiteDatabaseUtil.init();
+        DataManager.memberDataManager = new ORMLiteManager<>(ORMLiteMemberData.class);
+        DataManager.channelDataManager = new ORMLiteManager<>(ORMLiteChannelData.class);
+        DataManager.userDataManager = new ORMLiteManager<>(ORMLiteUserData.class);
+        DataManager.guildDataManager = new ORMLiteManager<>(ORMLiteGuildData.class);
+        DataManager.playerCardDataManager = new ORMLiteManager<>(ORMLitePlayerCardData.class);
+        DataManager.deckCardDataManager = new ORMLiteManager<>(ORMLiteDeckCardData.class);
+        DataManager.channelMemberDataManager = new ORMLiteManager<>(ORMLiteChannelMemberData.class);
         JDA api;
         CommandHandler commandHandler = new CommandHandler(Config.getConfig().prefix);
         SinonListener sinonListener = new SinonListener(commandHandler);
@@ -27,8 +39,25 @@ public class Main {
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(sinonListener)
                 .build();
-        commandHandler.registerCommand(new Ping(api));
-        commandHandler.registerCommand(new Test(api));
+        Reflections reflections = new Reflections("wtf.triplapeeck.sinon");
+        Set<Class<? extends Command>> commands = reflections.getSubTypesOf(Command.class);
+        for (Class<? extends Command> command : commands) {
+            try {
+                commandHandler.registerCommand(command.getDeclaredConstructor().newInstance());
+            } catch (Exception e) {
+                Logger.log(Logger.Level.ERROR, "Failed to register command: " + command.getName());
+                Logger.log(Logger.Level.ERROR, e.getMessage());
+            }
+        }
+        Set<Class<? extends EventConsumer>> consumers = reflections.getSubTypesOf(EventConsumer.class);
+        for (Class<? extends EventConsumer> consumer : consumers) {
+            try {
+                commandHandler.registerConsumer(consumer.getDeclaredConstructor().newInstance());
+            } catch (Exception e) {
+                Logger.log(Logger.Level.ERROR, "Failed to register consumer: " + consumer.getName());
+                Logger.log(Logger.Level.ERROR, e.getMessage());
+            }
+        }
         try {
             api.awaitReady();
         } catch (InterruptedException ignored) {

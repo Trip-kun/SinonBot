@@ -1,5 +1,7 @@
 package wtf.triplapeeck.sinon.entity;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface DataID {
-    String getID();
+    @NotNull String getID();
 }

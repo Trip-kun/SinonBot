@@ -12,13 +12,13 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.Nullable;
 import wtf.triplapeeck.sinon.Config;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public abstract class Command {
-    public void LoadCommand(JDA jda) {
+    public void init(JDA jda) {
         SlashCommandData data = Commands.slash(getFirstArgument().name, getDescription());
         for (Argument argument : arguments) {
             switch (argument.type) {
@@ -52,6 +52,8 @@ public abstract class Command {
                         optionData.addChoice(choice, choice);
                     }
                     data.addOptions(optionData);
+                }
+                default -> {
                 }
             }
         }
@@ -108,7 +110,7 @@ public abstract class Command {
 
         @Nullable
         public static CommandCategory fromString(String value) {
-            switch (value.toLowerCase()) {
+            switch (value.toLowerCase(Locale.US)) {
                 case "essential" -> {
                     return ESSENTIAL;
                 }
@@ -154,92 +156,6 @@ public abstract class Command {
         }
     }
     private ArrayList<Argument> arguments = new ArrayList<>();
-    public class Argument {
-        public enum Type {
-            COMMAND,
-            INTEGER,
-            UINT,
-            UINT_OVER_ZERO,
-            WORD,
-            TEXT,
-            USER,
-            CHANNEL,
-            ROLE,
-            BOOLEAN,
-            DECIMAL,
-            UDECIMAL,
-            UDECIMAL_OVER_ZERO,
-            ATTACHMENT,
-            SUBCOMMAND,
-        }
-        public String name;
-        public Type type;
-        public String description;
-        public ArrayList<String> choices = new ArrayList<>();
-        public boolean required;
-
-        public Argument(String name, String description, boolean required, Type type, @Nullable ArrayList<String> choices) {
-            this.name = name;
-            this.description = description;
-            this.required = required;
-            this.type=type;
-            if (type==Type.SUBCOMMAND) {
-                if (choices==null) {
-                    throw new IllegalArgumentException("Subcommand argument must have choices");
-                }
-            }
-            if (choices!=null) {
-                this.choices = choices;
-            }
-        }
-    }
-    public class ParsedArgument {
-        private Argument argument;
-        private String stringValue;
-        private Long intValue;
-        private Double doubleValue;
-        private Boolean boolValue;
-        private Message.Attachment attachment;
-        public ParsedArgument(Argument argument, String value, Message.Attachment attachment) {
-            this.argument = argument;
-            switch (argument.type) {
-                case INTEGER:
-                    intValue = Long.parseLong(value);
-                    break;
-                case UINT, UINT_OVER_ZERO, USER, CHANNEL, ROLE:
-                    intValue = Long.parseUnsignedLong(value);
-                    break;
-                case WORD, SUBCOMMAND, TEXT:
-                    stringValue = value;
-                    break;
-                case BOOLEAN:
-                    boolValue = Boolean.parseBoolean(value);
-                    break;
-                case DECIMAL, UDECIMAL, UDECIMAL_OVER_ZERO:
-                    doubleValue = Double.parseDouble(value);
-                    break;
-                case ATTACHMENT:
-                    this.attachment = attachment;
-                    break;
-            }
-        }
-        public String getStringValue() {
-            return stringValue;
-        }
-        public Long getIntValue() {
-            return intValue;
-        }
-        public Double getDoubleValue() {
-            return doubleValue;
-        }
-        public Boolean getBoolValue() {
-            return boolValue;
-        }
-
-        public Message.Attachment getAttachmentValue() {
-            return attachment;
-        }
-    }
     protected void addArgument(Argument argument) throws IllegalArgumentException {
         if (arguments.isEmpty() && argument.type != Argument.Type.COMMAND) {
             throw new IllegalArgumentException("First argument must be a command");
@@ -426,6 +342,7 @@ public abstract class Command {
                         }
                         argIndex++;
                     }
+                    default -> {}
                     // Case COMMAND is not needed as it is handled in the CommandHandler
                 }
             } catch (NumberFormatException e) {
@@ -443,7 +360,6 @@ public abstract class Command {
         ArrayList<Long> roles = new ArrayList<>();
         ArrayList<Long> channels = new ArrayList<>();
         ArrayList<Long> users = new ArrayList<>();
-        ArrayList<Message.Attachment> attachments = new ArrayList<>();
         for (int i = 0; i < event.getMessage().getMentions().getRoles().size(); i++) {
             roles.add(event.getMessage().getMentions().getRoles().get(i).getIdLong());
         }

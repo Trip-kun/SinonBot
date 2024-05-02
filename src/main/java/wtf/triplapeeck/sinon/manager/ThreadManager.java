@@ -25,7 +25,7 @@ public class ThreadManager extends Thread {
      * Get the instance of the ThreadManager
      * @return The instance of the ThreadManager
      */
-    public static ThreadManager getInstance() {
+    public synchronized static ThreadManager getInstance() {
         if (instance == null) {
             instance = new ThreadManager();
         }

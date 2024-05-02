@@ -2,6 +2,7 @@ package wtf.triplapeeck.sinon;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.j256.ormlite.db.DatabaseType;
 
 import java.io.FileOutputStream;
@@ -16,7 +17,7 @@ public class Config {
     // Json Handlers
     protected static final GsonBuilder gsonBuilder = new GsonBuilder(); // GsonBuilder instance
     protected static final Gson gson = gsonBuilder.create(); // Gson instance
-    public static Config config; // Static shared instance of the Config class
+    private static Config config; // Static shared instance of the Config class
     // Base Bot Configuration
     public double threadLimit = 10; // The maximum number of threads to use
     public long threadSleep = 100; // The time to sleep between thread checks
@@ -64,6 +65,9 @@ public class Config {
        } catch (IOException e) { // If the file cannot be read or written to
            Logger.log(Logger.Level.FATAL, e.getMessage()); // Log the error
            throw new RuntimeException(e); // Throw a runtime exception, as the bot cannot function without the config
+       } catch (JsonSyntaxException e) {
+              Logger.log(Logger.Level.FATAL, e.getMessage()); // Log the error
+              throw new RuntimeException(e); // Throw a runtime exception, as the bot cannot function without the config
        }
         return config; // Return the config
     }

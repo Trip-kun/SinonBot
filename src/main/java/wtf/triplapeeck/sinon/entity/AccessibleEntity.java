@@ -31,4 +31,5 @@ public abstract class AccessibleEntity {
     public synchronized int getAccessCount() {
         return accessCount;
     }
+    public abstract void load();
 }

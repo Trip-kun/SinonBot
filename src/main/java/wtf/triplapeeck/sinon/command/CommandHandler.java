@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class CommandHandler {
@@ -58,7 +59,10 @@ public class CommandHandler {
             consumer.handleEvent(event, jda);
         }
     }
-    public HashMap<String, Command> getCommands() {
-        return commands;
+    public Collection<String> getCommands() {
+        return commands.keySet();
+    }
+    public Command getCommand(@NotNull String name) {
+        return commands.get(name);
     }
 }

@@ -4,6 +4,8 @@ import wtf.triplapeeck.sinon.Logger;
 import wtf.triplapeeck.sinon.database.ORMEntityDao;
 import wtf.triplapeeck.sinon.database.ORMLiteDatabaseUtil;
 import wtf.triplapeeck.sinon.entity.AccessibleDataEntity;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<T> {
@@ -24,7 +26,7 @@ public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<
         if (data ==null) {
             try {
                 data = entityClass.getDeclaredConstructor(String.class).newInstance(id);
-            } catch (Exception e) {
+            } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 Logger.log(Logger.Level.ERROR, e.getMessage()); // Log the error
                 throw new RuntimeException(e); // This is a fatal error, so throw a runtime exception
             }
@@ -50,5 +52,10 @@ public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<
     @Override
     protected List<T> getAllRawData() {
         return dao.getAllEntities();
+    }
+
+    @Override
+    protected List<T> queryAllRawData(String query, T value) {
+        return dao.queryForEntities(query, value);
     }
 }

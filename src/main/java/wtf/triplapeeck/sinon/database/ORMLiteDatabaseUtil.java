@@ -6,6 +6,8 @@ import wtf.triplapeeck.sinon.Logger;
 import wtf.triplapeeck.sinon.entity.AccessibleDataEntity;
 import wtf.triplapeeck.sinon.entity.ormlite.ORMLiteChannelData;
 
+import java.sql.SQLException;
+
 public class ORMLiteDatabaseUtil {
     private static final int VERSION = 1;
     private static JdbcPooledConnectionSource connectionSource;
@@ -16,7 +18,7 @@ public class ORMLiteDatabaseUtil {
         }
         return null;
     }
-    public ORMLiteDatabaseUtil() {
+    public static void init() {
         Config config = Config.getConfig();
         int tries = 0;
         boolean success = false;
@@ -25,7 +27,7 @@ public class ORMLiteDatabaseUtil {
                 connectionSource = new JdbcPooledConnectionSource("jdbc:mariadb://" + config.dbUrl + ":" + config.dbPort + "/" + config.dbDatabase + "?user=" + config.dbUser + "&password=" + config.dbPass, config.dbType);
                 success = true;
                 break;
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 tries++;
             }
         }
