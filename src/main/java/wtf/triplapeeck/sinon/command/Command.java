@@ -11,11 +11,14 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.Nullable;
 import wtf.triplapeeck.sinon.Config;
+import wtf.triplapeeck.sinon.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class Command {
     public void init(JDA jda) {
@@ -47,7 +50,7 @@ public abstract class Command {
                     data.addOption(OptionType.ATTACHMENT, argument.name, argument.description);
                 }
                 case SUBCOMMAND -> {
-                    OptionData optionData = new OptionData(OptionType.STRING, argument.name, argument.description, true, false);
+                    OptionData optionData = new OptionData(OptionType.STRING, argument.name, argument.description, argument.required, false);
                     for (String choice : argument.choices) {
                         optionData.addChoice(choice, choice);
                     }
@@ -175,7 +178,13 @@ public abstract class Command {
         if (arguments.stream().anyMatch(arg -> arg.required==false) && argument.required) {
             throw new IllegalArgumentException("Required arguments must be first");
         }
+        if (argument.type == Argument.Type.SUBCOMMAND && arguments.stream().anyMatch(arg -> arg.type != Argument.Type.COMMAND && arg.type != Argument.Type.SUBCOMMAND )) {
+            throw new IllegalArgumentException("Subcommand arguments must be first");
+        }
         arguments.add(argument);
+    }
+    public ArrayList<Argument> getArguments() {
+        return arguments;
     }
     protected ArrayList<ParsedArgument> parseArguments(String messageContent, Collection<Message.Attachment> attachments, Collection<Long> mentionedRoles, Collection<Long> mentionedUsers, Collection<Long> mentionedChannels) throws IllegalArgumentException {
         ArrayList<ParsedArgument> parsedArguments = new ArrayList<>();
@@ -335,12 +344,18 @@ public abstract class Command {
                             }
                             parsedArguments.add(new ParsedArgument(argument, "", null));
                         } else {
-                            if (argument.type== Argument.Type.SUBCOMMAND && !argument.choices.contains(messageParts[argIndex])) {
+                            if (!argument.required && messageParts[argIndex].isEmpty()) { // Accept a null value for optional arguments
+                                parsedArguments.add(new ParsedArgument(argument, "", null));
+                                argIndex++;
+                            } else if (!argument.required && argument.type== Argument.Type.SUBCOMMAND && !argument.choices.contains(messageParts[argIndex])) { // Argument is skipped by user (the current arg is NOT for this argument), pass null string and move on
+                                parsedArguments.add(new ParsedArgument(argument, "", null));
+                            } else if (argument.type== Argument.Type.SUBCOMMAND && !argument.choices.contains(messageParts[argIndex]) && argument.required) { // If required, check that it contains a valid subcommand
                                 throw new IllegalArgumentException("Subcommand argument " + argument.name + " must be one of " + String.join(", ", argument.choices));
+                            }  else { // Value successful taken, increment
+                                parsedArguments.add(new ParsedArgument(argument, messageParts[argIndex], null));
+                                argIndex++;
                             }
-                            parsedArguments.add(new ParsedArgument(argument, messageParts[argIndex], null));
                         }
-                        argIndex++;
                     }
                     default -> {}
                     // Case COMMAND is not needed as it is handled in the CommandHandler
@@ -369,7 +384,8 @@ public abstract class Command {
         for (int i = 0; i < event.getMessage().getMentions().getUsers().size(); i++) {
             users.add(event.getMessage().getMentions().getUsers().get(i).getIdLong());
         }
-        return parseArguments(event.getMessage().getContentRaw().substring(Config.getConfig().prefix.length()+1+getFirstArgument().name.length()), event.getMessage().getAttachments(), roles, users, channels);
+        Integer index = Config.getConfig().prefix.length()+1+getFirstArgument().name.length();
+        return parseArguments(event.getMessage().getContentRaw().substring(index >=event.getMessage().getContentRaw().length() ? event.getMessage().getContentRaw().length()-1 : index), event.getMessage().getAttachments(), roles, users, channels);
     }
     protected ArrayList<ParsedArgument> parseArguments(SlashCommandInteractionEvent event) {
         ArrayList<Long> roles = new ArrayList<>();

@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import wtf.triplapeeck.sinon.Config;
 import wtf.triplapeeck.sinon.Logger;
 import wtf.triplapeeck.sinon.Tuple2;
+import wtf.triplapeeck.sinon.UserResponseThread;
+import wtf.triplapeeck.sinon.database.DatabaseException;
 
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -34,6 +36,21 @@ public class ThreadManager extends Thread {
     }
     @Override
     public void run() {
+        UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                if (thread instanceof UserResponseThread) {
+                    if (throwable instanceof DatabaseException)
+                        ((UserResponseThread) thread).getChannel().sendMessage(Config.getConfig().errorResponseString + ". The following error occurred: " + throwable.getMessage()).queue();
+                }
+                Logger.log(Logger.Level.ERROR, "Uncaught exception in thread: " + thread.getName());
+                Logger.log(Logger.Level.ERROR, throwable.getMessage());
+                for (StackTraceElement element : throwable.getStackTrace()) {
+                    Logger.log(Logger.Level.ERROR, element.toString());
+                }
+            }
+        };
+
         Logger.log(Logger.Level.INFO, "ThreadManager started");
         boolean stillFinishing=false;
         ArrayList<Tuple2<String, Thread>> finishedThreads = new ArrayList<>();
@@ -49,12 +66,12 @@ public class ThreadManager extends Thread {
                         stillFinishing = true;
                         break;
                     case TERMINATED:
+
                         finishedThreads.add(thread);
                         break;
                 }
             }
             for (Tuple2<String, Thread> thread : finishedThreads) {
-                Logger.log(Logger.Level.INFO, "Thread with name " + thread.getA() + " has finished");
                 threads.remove(thread);
             }
             if (requestToEnd && !stillFinishing) {
@@ -83,7 +100,7 @@ public class ThreadManager extends Thread {
      * @param name The name of the thread
      * @param thread The thread to add
      */
-    public void addThread(@NotNull String name, @NotNull Runnable thread) {
-        threadQueue.add(new Tuple2<>(name, new Thread(thread)));
+    public void addThread(@NotNull String name, @NotNull Thread thread) {
+        threadQueue.add(new Tuple2<>(name, thread));
     }
 }

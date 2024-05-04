@@ -11,6 +11,7 @@ import wtf.triplapeeck.sinon.entity.DeckCardData;
 import wtf.triplapeeck.sinon.entity.PlayerCardData;
 import wtf.triplapeeck.sinon.entity.PlayerSpotData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @DatabaseTable(tableName = "oatmeal_channels")
@@ -31,6 +32,9 @@ public class ORMLiteChannelData extends ChannelData {
     private @NotNull Collection<ORMLitePlayerCardData> playerCards;
     public ORMLiteChannelData(String id) {
         this.id = id;
+        playerCards = new ArrayList<>();
+        deckCards = new ArrayList<>();
+        playerSpots = new ArrayList<>();
     }
     public ORMLiteChannelData() {} // For ORMLite
     public void setBlackjackInProgress(@NotNull Boolean blackjackInProgress) {

@@ -12,7 +12,7 @@ import wtf.triplapeeck.sinon.manager.DataManager;
 @DatabaseTable(tableName = "oatmeal_player_cards")
 public class ORMLitePlayerCardData extends PlayerCardData {
     @DatabaseField(generatedId = true)
-    private @NotNull String id;
+    private @NotNull Integer id;
     @DatabaseField(canBeNull=false, dataType= DataType.ENUM_INTEGER)
     private @NotNull Face face;
     @DatabaseField(canBeNull=false, dataType= DataType.ENUM_INTEGER)
@@ -56,7 +56,7 @@ public class ORMLitePlayerCardData extends PlayerCardData {
     }
     @Override
     public @NotNull String getID() {
-        return id;
+        return String.valueOf(id);
     }
     @Override
     public void load() {

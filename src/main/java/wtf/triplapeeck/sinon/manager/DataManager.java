@@ -30,7 +30,7 @@ public abstract class DataManager<T extends AccessibleEntity> implements Runnabl
     public abstract void saveData(String id, boolean remove);
     public abstract void removeData(String id);
     protected abstract List<T> getAllRawData();
-    protected abstract List<T> queryAllRawData(String query, T value);
+    protected abstract List<T> queryAllRawData(String query, AccessibleEntity value);
     public synchronized ClosableEntity<T> getData(String id) {
         dataCache.putIfAbsent(id, getRawData(id));
         return new ClosableEntity<>(dataCache.get(id));

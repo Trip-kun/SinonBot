@@ -8,7 +8,7 @@ import wtf.triplapeeck.sinon.entity.StarboardEntryData;
 @DatabaseTable(tableName = "oatmeal_starboard_entries")
 public class ORMLiteStarboardEntryData extends StarboardEntryData {
     @DatabaseField(generatedId = true)
-    private @NotNull String id;
+    private @NotNull Integer id;
     @DatabaseField(canBeNull=false)
     private @NotNull String originalMessageID;
     @DatabaseField(canBeNull=false)
@@ -43,7 +43,7 @@ public class ORMLiteStarboardEntryData extends StarboardEntryData {
     }
     @Override
     public @NotNull String getID() {
-        return id;
+        return String.valueOf(id);
     }
     @Override
     public void load() {

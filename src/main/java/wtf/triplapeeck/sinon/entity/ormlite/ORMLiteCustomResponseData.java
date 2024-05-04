@@ -9,7 +9,7 @@ import wtf.triplapeeck.sinon.entity.GuildData;
 @DatabaseTable(tableName = "oatmeal_custom_responses")
 public class ORMLiteCustomResponseData extends CustomResponseData {
     @DatabaseField(generatedId = true)
-    private @NotNull String id;
+    private @NotNull Integer id;
     @DatabaseField(canBeNull=false, foreign = true, foreignAutoRefresh = true)
     private @NotNull ORMLiteGuildData guild;
     @DatabaseField(canBeNull=false, width=5000)
@@ -44,7 +44,7 @@ public class ORMLiteCustomResponseData extends CustomResponseData {
     }
     @Override
     public @NotNull String getID() {
-        return id;
+        return String.valueOf(id);
     }
     @Override
     public void load() {

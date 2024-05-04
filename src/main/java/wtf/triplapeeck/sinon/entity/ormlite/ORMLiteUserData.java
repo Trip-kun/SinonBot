@@ -6,6 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.jetbrains.annotations.NotNull;
 import wtf.triplapeeck.sinon.entity.UserData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @DatabaseTable(tableName = "oatmeal_users")
@@ -25,6 +26,7 @@ public class ORMLiteUserData extends UserData {
         this.owner = false;
         this.admin = false;
         this.currencyPreference = false;
+        reminders = new ArrayList<>();
     }
     public ORMLiteUserData() {} // For ORMLite
 

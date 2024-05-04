@@ -16,6 +16,7 @@ import wtf.triplapeeck.sinon.entity.ormlite.*;
 import wtf.triplapeeck.sinon.manager.DataManager;
 import wtf.triplapeeck.sinon.manager.ORMLiteManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -43,10 +44,22 @@ public class Main {
         Set<Class<? extends Command>> commands = reflections.getSubTypesOf(Command.class);
         for (Class<? extends Command> command : commands) {
             try {
-                commandHandler.registerCommand(command.getDeclaredConstructor().newInstance());
+                commandHandler.registerCommand(command.getDeclaredConstructor(JDA.class).newInstance(api));
+            } catch (InvocationTargetException e2) {
+                Throwable e = e2.getTargetException();
+                Logger.log(Logger.Level.ERROR, "Failed to register command: " + command.getName());
+                Logger.log(Logger.Level.ERROR, e.getMessage());
+                Logger.log(Logger.Level.ERROR, e.getClass().getName());
+                for (StackTraceElement element : e.getStackTrace()) {
+                    Logger.log(Logger.Level.ERROR, element.toString());
+                }
             } catch (Exception e) {
                 Logger.log(Logger.Level.ERROR, "Failed to register command: " + command.getName());
                 Logger.log(Logger.Level.ERROR, e.getMessage());
+                Logger.log(Logger.Level.ERROR, e.getClass().getName());
+                for (StackTraceElement element : e.getStackTrace()) {
+                    Logger.log(Logger.Level.ERROR, element.toString());
+                }
             }
         }
         Set<Class<? extends EventConsumer>> consumers = reflections.getSubTypesOf(EventConsumer.class);
@@ -56,6 +69,9 @@ public class Main {
             } catch (Exception e) {
                 Logger.log(Logger.Level.ERROR, "Failed to register consumer: " + consumer.getName());
                 Logger.log(Logger.Level.ERROR, e.getMessage());
+                for (StackTraceElement element : e.getStackTrace()) {
+                    Logger.log(Logger.Level.ERROR, element.toString());
+                }
             }
         }
         try {

@@ -4,6 +4,7 @@ import wtf.triplapeeck.sinon.Logger;
 import wtf.triplapeeck.sinon.database.ORMEntityDao;
 import wtf.triplapeeck.sinon.database.ORMLiteDatabaseUtil;
 import wtf.triplapeeck.sinon.entity.AccessibleDataEntity;
+import wtf.triplapeeck.sinon.entity.AccessibleEntity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<
     }
 
     @Override
-    protected List<T> queryAllRawData(String query, T value) {
+    protected List<T> queryAllRawData(String query, AccessibleEntity value) {
         return dao.queryForEntities(query, value);
     }
 }

@@ -9,7 +9,7 @@ import wtf.triplapeeck.sinon.entity.UserData;
 @DatabaseTable(tableName = "oatmeal_reminders")
 public class ORMLiteReminderData extends ReminderData {
     @DatabaseField(generatedId = true)
-    private String id;
+    private Integer id;
     @DatabaseField(canBeNull=false, foreign = true, foreignAutoRefresh = true)
     private ORMLiteUserData user;
     @DatabaseField(canBeNull=false, width=5000)
@@ -44,7 +44,7 @@ public class ORMLiteReminderData extends ReminderData {
     }
     @Override
     public @NotNull String getID() {
-        return id;
+        return String.valueOf(id);
     }
     @Override
     public void load() {

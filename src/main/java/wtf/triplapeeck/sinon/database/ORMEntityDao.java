@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import wtf.triplapeeck.sinon.Config;
 import wtf.triplapeeck.sinon.Logger;
 import wtf.triplapeeck.sinon.entity.AccessibleDataEntity;
+import wtf.triplapeeck.sinon.entity.AccessibleEntity;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -28,12 +29,13 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
                 break;
             } catch (SQLException e) {
                 Logger.log(Logger.Level.ERROR,"Failed to create table for entity class: " + entityClass.getName() + " on try " + tries);
+                Logger.log(Logger.Level.ERROR, e.getMessage());
                 tries++;
             }
         }
         if (!success) {
             Logger.log(Logger.Level.ERROR,"Failed to create table for entity class: " + entityClass.getName());
-            throw new RuntimeException("Failed to create table for entity class: " + entityClass.getName());
+            throw new DatabaseException("Failed to create table for entity class: " + entityClass.getName());
         }
         tries=0;
         while (tries < Config.getConfig().maxRetries) {
@@ -47,7 +49,7 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
         }
         if (dao == null) {
             Logger.log(Logger.Level.ERROR,"Failed to create DAO for entity class: " + entityClass.getName());
-            throw new RuntimeException("Failed to create DAO for entity class: " + entityClass.getName());
+            throw new DatabaseException("Failed to create DAO for entity class: " + entityClass.getName());
         }
     }
 
@@ -62,7 +64,7 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
             }
         }
         Logger.log(Logger.Level.ERROR,"Failed to get entity with id: " + id + " for entity class: " + entityClass.getName());
-        throw new RuntimeException("Failed to get entity with id: " + id + " for entity class: " + entityClass.getName());
+        throw new DatabaseException("Failed to get entity with id: " + id + " for entity class: " + entityClass.getName());
     }
 
     public void saveEntity(T entity) {
@@ -90,7 +92,7 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
             }
         }
         Logger.log(Logger.Level.ERROR, "Failed to remove entity with id: " + id + " for entity class: " + entityClass.getName());
-        throw new RuntimeException("Failed to remove entity with id: " + id + " for entity class: " + entityClass.getName());
+        throw new DatabaseException("Failed to remove entity with id: " + id + " for entity class: " + entityClass.getName());
     }
 
     public List<T> getAllEntities() {
@@ -104,9 +106,9 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
             }
         }
         Logger.log(Logger.Level.ERROR, "Failed to get all entities for entity class: " + entityClass.getName());
-        throw new RuntimeException("Failed to get all entities for entity class: " + entityClass.getName());
+        throw new DatabaseException("Failed to get all entities for entity class: " + entityClass.getName());
     }
-    public List<T> queryForEntities(String field, T value) {
+    public List<T> queryForEntities(String field, AccessibleEntity value) {
         int tries =0;
         while (tries < Config.getConfig().maxRetries) {
             try {
@@ -117,7 +119,7 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
             }
         }
         Logger.log(Logger.Level.ERROR, "Failed to get entities for entity class: " + entityClass.getName());
-        throw new RuntimeException("Failed to get entities for entity class: " + entityClass.getName());
+        throw new DatabaseException("Failed to get entities for entity class: " + entityClass.getName());
     }
     public void deleteEntities(@NotNull Collection<String> ids) {
         int tries =0;

@@ -8,6 +8,7 @@ import wtf.triplapeeck.sinon.entity.MemberData;
 import wtf.triplapeeck.sinon.entity.PlayerSpotData;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @DatabaseTable(tableName = "oatmeal_members")
@@ -24,6 +25,7 @@ public class ORMLiteMemberData extends MemberData {
         this.id = id;
         this.rak= BigInteger.ZERO;
         this.messageCount = 0;
+        playerSpots=new ArrayList<>();
     }
     public ORMLiteMemberData() {}
     @Override

@@ -9,6 +9,7 @@ import wtf.triplapeeck.sinon.entity.CustomCommandData;
 import wtf.triplapeeck.sinon.entity.CustomResponseData;
 import wtf.triplapeeck.sinon.entity.GuildData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @DatabaseTable(tableName = "oatmeal_guilds")
@@ -36,6 +37,8 @@ public class ORMLiteGuildData extends GuildData {
         this.starboardThreshold = 2;
         this.currencyEnabled = true;
         this.testingEnabled = false;
+        customCommands= new ArrayList<>();
+        customResponses = new ArrayList<>();
     }
     public ORMLiteGuildData() {} // For ORMLite
 

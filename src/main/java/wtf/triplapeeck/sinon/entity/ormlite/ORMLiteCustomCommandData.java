@@ -9,7 +9,7 @@ import wtf.triplapeeck.sinon.entity.GuildData;
 @DatabaseTable(tableName = "oatmeal_custom_commands")
 public class ORMLiteCustomCommandData extends CustomCommandData {
     @DatabaseField(generatedId = true)
-    private String id;
+    private Integer id;
     @DatabaseField(canBeNull=false, width=5000)
     private String commandName;
     @DatabaseField(canBeNull=false, width=5000)
@@ -44,7 +44,7 @@ public class ORMLiteCustomCommandData extends CustomCommandData {
     }
     @Override
     public @NotNull String getID() {
-        return id;
+        return String.valueOf(id);
     }
     @Override
     public void load() {

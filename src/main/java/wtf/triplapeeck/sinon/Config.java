@@ -22,7 +22,7 @@ public class Config {
     public double threadLimit = 10; // The maximum number of threads to use
     public long threadSleep = 100; // The time to sleep between thread checks
     public long dataThreadSleep = 1000; // The time to sleep between data checks
-    public long dataLifetime = 30000; // The time to keep data in the cache
+    public long dataLifetime = 30; // The time to keep data in the cache
     public String prefix = "s!"; // The prefix for commands
     public String token = ""; // The bot token
     public List<Long> owners = new ArrayList<>(); // The bot owners
@@ -33,7 +33,8 @@ public class Config {
     public String dbUrl = ""; // The URL of the database
     public String dbUser = ""; // The username of the database
     public String dbPass = ""; // The password of the database
-    public String dbDatabase = ""; // The database to use
+    public String dbDatabase = "Sorry, an exception occurred! I was unable to complete this command."; // The database to use
+    public String errorResponseString = ""; // The response for a user when an internal exception like an SQLException occurs
     public int dbPort = 3306; // The port of the database
     public int maxResponses = 10; // The maximum number of responses to store
     public int maxConnections = 10; // The maximum number of connections to the database

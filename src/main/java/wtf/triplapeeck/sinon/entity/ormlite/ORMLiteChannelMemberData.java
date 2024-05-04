@@ -23,8 +23,6 @@ public class ORMLiteChannelMemberData extends ChannelMemberData {
     private @NotNull Boolean split;
     @DatabaseField(canBeNull=false)
     private @NotNull Boolean doubled2;
-    @ForeignCollectionField(eager = true)
-    private @NotNull Collection<ORMLitePlayerSpotData> playerSpots;
     public ORMLiteChannelMemberData() {}
     public ORMLiteChannelMemberData(String id) {
         this.id = id;

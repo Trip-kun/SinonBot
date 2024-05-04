@@ -94,7 +94,7 @@ public class Test extends Command {
 
     @Override
     public String getDescription() {
-        return "NULL";
+        return "Hehehehe";
     }
 
     @Override

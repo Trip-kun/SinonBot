@@ -8,12 +8,13 @@ import wtf.triplapeeck.sinon.entity.ChannelData;
 import wtf.triplapeeck.sinon.entity.MemberData;
 import wtf.triplapeeck.sinon.entity.PlayerSpotData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @DatabaseTable(tableName = "oatmeal_player_spots")
 public class ORMLitePlayerSpotData extends PlayerSpotData {
     @DatabaseField(generatedId = true)
-    private @NotNull String id;
+    private @NotNull Integer id;
     @DatabaseField(canBeNull=false)
     private @NotNull Integer bet;
     @DatabaseField(canBeNull=false)
@@ -32,6 +33,7 @@ public class ORMLitePlayerSpotData extends PlayerSpotData {
     private @NotNull ORMLiteMemberData player;
     public ORMLitePlayerSpotData() {}
     public ORMLitePlayerSpotData(String ignored) {
+        cardData = new ArrayList<>();
     }
     @Override
     public @NotNull Integer getBet() {
@@ -97,6 +99,6 @@ public class ORMLitePlayerSpotData extends PlayerSpotData {
     }
     @Override
     public @NotNull String getID() {
-        return id;
+        return String.valueOf(id);
     }
 }
