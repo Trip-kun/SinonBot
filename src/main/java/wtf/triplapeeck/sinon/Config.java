@@ -19,7 +19,7 @@ public class Config {
     protected static final Gson gson = gsonBuilder.create(); // Gson instance
     private static Config config; // Static shared instance of the Config class
     // Base Bot Configuration
-    public double threadLimit = 10; // The maximum number of threads to use
+    public long threadLimit = 50; // The maximum number of threads to use
     public long threadSleep = 100; // The time to sleep between thread checks
     public long dataThreadSleep = 1000; // The time to sleep between data checks
     public long dataLifetime = 30; // The time to keep data in the cache

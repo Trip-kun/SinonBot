@@ -18,13 +18,19 @@ public class RakUpdateConsumer extends EventConsumer {
     private final Random random = new Random();
     @Override
     public void handleEvent(MessageReceivedEvent event, JDA jda) {
-        try (ClosableEntity<? extends GuildData> gData = DataManager.guildDataManager.getData(event.getGuild().getId())) {
+        String guildId;
+        try {
+            guildId = event.getGuild().getId();
+        } catch (IllegalStateException e) {
+            guildId = event.getAuthor().getId();
+        }
+        try (ClosableEntity<? extends GuildData> gData = DataManager.guildDataManager.getData(guildId)) {
             GuildData data = gData.getData();
             if (!data.isCurrencyEnabled()) {
                 return;
             }
         }
-        try (ClosableEntity<? extends MemberData> mData = DataManager.memberDataManager.getData(event.getAuthor().getId() + event.getGuild().getId())) {
+        try (ClosableEntity<? extends MemberData> mData = DataManager.memberDataManager.getData(event.getAuthor().getId() + guildId)) {
             MemberData data = mData.getData();
             data.setMessageCount(data.getMessageCount() + 1);
             double lucky5int = random.nextInt(25)-12.5;

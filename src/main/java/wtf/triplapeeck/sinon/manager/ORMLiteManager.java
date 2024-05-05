@@ -7,6 +7,7 @@ import wtf.triplapeeck.sinon.entity.AccessibleDataEntity;
 import wtf.triplapeeck.sinon.entity.AccessibleEntity;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 
 public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<T> {
@@ -49,6 +50,13 @@ public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<
         dataCache.remove(id);
         dao.removeEntity(id);
     }
+    @Override
+    public void removeData(Collection<String> ids) {
+        for (String id : ids) {
+            dataCache.remove(id);
+        }
+        dao.removeEntity(ids);
+    }
 
     @Override
     protected List<T> getAllRawData() {
@@ -58,5 +66,10 @@ public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<
     @Override
     protected List<T> queryAllRawData(String query, AccessibleEntity value) {
         return dao.queryForEntities(query, value);
+    }
+
+    @Override
+    protected List<T> queryLessThanRawData(String query, Integer value) {
+        return dao.queryForLessThan(query, value);
     }
 }

@@ -6,20 +6,27 @@ import wtf.triplapeeck.sinon.Config;
 import wtf.triplapeeck.sinon.Logger;
 import wtf.triplapeeck.sinon.entity.*;
 
+import javax.xml.crypto.Data;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class DataManager<T extends AccessibleEntity> implements Runnable {
-    public static DataManager<? extends MemberData> memberDataManager;
+public abstract class DataManager<T extends AccessibleDataEntity> implements Runnable {
     public static DataManager<? extends ChannelData> channelDataManager;
-    public static DataManager<? extends UserData> userDataManager;
-    public static DataManager<? extends GuildData> guildDataManager;
-    public static DataManager<? extends PlayerCardData> playerCardDataManager;
-    public static DataManager<? extends DeckCardData> deckCardDataManager;
     public static DataManager<? extends ChannelMemberData> channelMemberDataManager;
+    public static DataManager<? extends CustomCommandData> customCommandDataManager;
+    public static DataManager<? extends CustomResponseData> customResponseDataManager;
+    public static DataManager<? extends DeckCardData> deckCardDataManager;
+    public static DataManager<? extends GuildData> guildDataManager;
+    public static DataManager<? extends MemberData> memberDataManager;
+    public static DataManager<? extends PlayerCardData> playerCardDataManager;
+    public static DataManager<? extends PlayerSpotData> playerSpotDataManager;
+    public static DataManager<? extends ReminderData> reminderDataManager;
+    public static DataManager<? extends StarboardEntryData> starboardEntryDataManager;
+    public static DataManager<? extends UserData> userDataManager;
     private AtomicBoolean requestToEnd = new AtomicBoolean(false);
     protected final ArrayList<String> temp = new ArrayList<>();
     protected final ConcurrentHashMap<String, T> dataCache = new ConcurrentHashMap<>();
@@ -29,8 +36,10 @@ public abstract class DataManager<T extends AccessibleEntity> implements Runnabl
     protected abstract T getRawData(String id);
     public abstract void saveData(String id, boolean remove);
     public abstract void removeData(String id);
+    public abstract void removeData(Collection<String> ids);
     protected abstract List<T> getAllRawData();
     protected abstract List<T> queryAllRawData(String query, AccessibleEntity value);
+    protected abstract List<T> queryLessThanRawData(String query, Integer value);
     public synchronized ClosableEntity<T> getData(String id) {
         dataCache.putIfAbsent(id, getRawData(id));
         return new ClosableEntity<>(dataCache.get(id));
@@ -74,6 +83,15 @@ public abstract class DataManager<T extends AccessibleEntity> implements Runnabl
             }
         }
     }
+    public synchronized List<ClosableEntity<T>> queryLessThan(String query, Integer value) {
+        List<T> dataList = queryLessThanRawData(query, value);
+        ArrayList<ClosableEntity<T>> dataOut = new ArrayList<>();
+        for (T data : dataList) {
+            dataOut.add(new ClosableEntity<>(data));
+            dataCache.put(data.getID(), data);
+        }
+        return dataOut;
+    }
 
     @Override
     public void run() {
@@ -113,7 +131,6 @@ public abstract class DataManager<T extends AccessibleEntity> implements Runnabl
             for (String key : temp) {
                 T data = dataCache.get(key);
                 if (data!=null && data.getAccessCount()==0) {
-                    removeData(key);
                     dataCache.remove(key);
                 }
             }

@@ -3,6 +3,7 @@ package wtf.triplapeeck.sinon.database;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.table.TableUtils;
 import org.jetbrains.annotations.NotNull;
 import wtf.triplapeeck.sinon.Config;
@@ -75,9 +76,12 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
                 return;
             } catch (SQLException e) {
                 Logger.log(Logger.Level.ERROR, "Failed to save entity with id: " + entity.getID() + " for entity class: " + entity);
+                Logger.log(Logger.Level.ERROR, e.getMessage());
                 tries++;
             }
         }
+        Logger.log(Logger.Level.ERROR, "Failed to save entity with id: " + entity.getID() + " for entity class: " + entity);
+        throw new DatabaseException("Failed to save entity with id: " + entity.getID() + " for entity class: " + entity);
     }
 
     public void removeEntity(String id) {
@@ -93,6 +97,20 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
         }
         Logger.log(Logger.Level.ERROR, "Failed to remove entity with id: " + id + " for entity class: " + entityClass.getName());
         throw new DatabaseException("Failed to remove entity with id: " + id + " for entity class: " + entityClass.getName());
+    }
+    public void removeEntity(Collection<String> ids) {
+        int tries =0;
+        while (tries < Config.getConfig().maxRetries) {
+            try {
+                dao.deleteIds(ids);
+                return;
+            } catch (SQLException e) {
+                Logger.log(Logger.Level.ERROR, "Failed to remove entities for entity class: " + entityClass.getName() + " on try " + tries);
+                tries++;
+            }
+        }
+        Logger.log(Logger.Level.ERROR, "Failed to remove entities for entity class: " + entityClass.getName());
+        throw new DatabaseException("Failed to remove entities for entity class: " + entityClass.getName());
     }
 
     public List<T> getAllEntities() {
@@ -132,8 +150,23 @@ public class ORMEntityDao<T extends AccessibleDataEntity> {
                 tries++;
             }
         }
+
         Logger.log(Logger.Level.ERROR, "Failed to delete entities for entity class: " + entityClass.getName());
         throw new RuntimeException("Failed to delete entities for entity class: " + entityClass.getName());
+    }
+    public List<T> queryForLessThan(String field, Integer limit) {
+        int tries =0;
+        while (tries < Config.getConfig().maxRetries) {
+            try {
+                PreparedQuery<T> query = dao.queryBuilder().where().lt(field, limit).prepare();
+                return dao.query(query);
+            } catch (SQLException e) {
+                Logger.log(Logger.Level.ERROR, "Failed to query for entities for entity class: " + entityClass.getName() + " on try " + tries);
+                tries++;
+            }
+        }
+        Logger.log(Logger.Level.ERROR, "Failed to query for entities for entity class: " + entityClass.getName());
+        throw new DatabaseException("Failed to query for entities for entity class: " + entityClass.getName());
     }
     public Dao<T, String> getDao() {
         return dao;

@@ -15,6 +15,8 @@ import wtf.triplapeeck.sinon.database.ORMLiteDatabaseUtil;
 import wtf.triplapeeck.sinon.entity.ormlite.*;
 import wtf.triplapeeck.sinon.manager.DataManager;
 import wtf.triplapeeck.sinon.manager.ORMLiteManager;
+import wtf.triplapeeck.sinon.manager.ThreadManager;
+import wtf.triplapeeck.sinon.runnable.Heartbeat;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -25,13 +27,30 @@ public class Main {
     public static void main(String[] args) {
         Logger.setLogLevel(Logger.Level.WARNING);
         ORMLiteDatabaseUtil.init();
-        DataManager.memberDataManager = new ORMLiteManager<>(ORMLiteMemberData.class);
         DataManager.channelDataManager = new ORMLiteManager<>(ORMLiteChannelData.class);
-        DataManager.userDataManager = new ORMLiteManager<>(ORMLiteUserData.class);
-        DataManager.guildDataManager = new ORMLiteManager<>(ORMLiteGuildData.class);
-        DataManager.playerCardDataManager = new ORMLiteManager<>(ORMLitePlayerCardData.class);
-        DataManager.deckCardDataManager = new ORMLiteManager<>(ORMLiteDeckCardData.class);
         DataManager.channelMemberDataManager = new ORMLiteManager<>(ORMLiteChannelMemberData.class);
+        DataManager.customCommandDataManager = new ORMLiteManager<>(ORMLiteCustomCommandData.class);
+        DataManager.customResponseDataManager = new ORMLiteManager<>(ORMLiteCustomResponseData.class);
+        DataManager.deckCardDataManager = new ORMLiteManager<>(ORMLiteDeckCardData.class);
+        DataManager.guildDataManager = new ORMLiteManager<>(ORMLiteGuildData.class);
+        DataManager.memberDataManager = new ORMLiteManager<>(ORMLiteMemberData.class);
+        DataManager.playerCardDataManager = new ORMLiteManager<>(ORMLitePlayerCardData.class);
+        DataManager.playerSpotDataManager = new ORMLiteManager<>(ORMLitePlayerSpotData.class);
+        DataManager.reminderDataManager = new ORMLiteManager<>(ORMLiteReminderData.class);
+        DataManager.starboardEntryDataManager = new ORMLiteManager<>(ORMLiteStarboardEntryData.class);
+        DataManager.userDataManager = new ORMLiteManager<>(ORMLiteUserData.class);
+        ThreadManager.getInstance().addThread("ChannelDataManager", new Thread(DataManager.channelDataManager));
+        ThreadManager.getInstance().addThread("ChannelMemberDataManager", new Thread(DataManager.channelMemberDataManager));
+        ThreadManager.getInstance().addThread("CustomCommandDataManager", new Thread(DataManager.customCommandDataManager));
+        ThreadManager.getInstance().addThread("CustomResponseDataManager", new Thread(DataManager.customResponseDataManager));
+        ThreadManager.getInstance().addThread("DeckCardDataManager", new Thread(DataManager.deckCardDataManager));
+        ThreadManager.getInstance().addThread("GuildDataManager", new Thread(DataManager.guildDataManager));
+        ThreadManager.getInstance().addThread("MemberDataManager", new Thread(DataManager.memberDataManager));
+        ThreadManager.getInstance().addThread("PlayerCardDataManager", new Thread(DataManager.playerCardDataManager));
+        ThreadManager.getInstance().addThread("PlayerSpotDataManager", new Thread(DataManager.playerSpotDataManager));
+        ThreadManager.getInstance().addThread("ReminderDataManager", new Thread(DataManager.reminderDataManager));
+        ThreadManager.getInstance().addThread("StarboardEntryDataManager", new Thread(DataManager.starboardEntryDataManager));
+        ThreadManager.getInstance().addThread("UserDataManager", new Thread(DataManager.userDataManager));
         JDA api;
         CommandHandler commandHandler = new CommandHandler(Config.getConfig().prefix);
         SinonListener sinonListener = new SinonListener(commandHandler);
@@ -40,6 +59,8 @@ public class Main {
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(sinonListener)
                 .build();
+        Heartbeat.setJDA(api);
+        ThreadManager.getInstance().addThread("Heartbeat", new Thread(Heartbeat.getInstance()));
         Reflections reflections = new Reflections("wtf.triplapeeck.sinon");
         Set<Class<? extends Command>> commands = reflections.getSubTypesOf(Command.class);
         for (Class<? extends Command> command : commands) {

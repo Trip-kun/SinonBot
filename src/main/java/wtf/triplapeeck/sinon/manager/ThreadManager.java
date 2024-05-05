@@ -30,8 +30,8 @@ public class ThreadManager extends Thread {
     public synchronized static ThreadManager getInstance() {
         if (instance == null) {
             instance = new ThreadManager();
+            instance.start();
         }
-        instance.start();
         return instance;
     }
     @Override

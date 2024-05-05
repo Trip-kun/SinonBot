@@ -13,7 +13,13 @@ public class CustomResponseConsumer extends EventConsumer {
     @Override
     public void handleEvent(MessageReceivedEvent event, JDA jda) {
         String messageContentLower = event.getMessage().getContentRaw().toLowerCase();
-        try (ClosableEntity<? extends GuildData> gData = DataManager.guildDataManager.getData(event.getGuild().getId())) {
+        String guildId;
+        try {
+            guildId = event.getGuild().getId();
+        } catch (IllegalStateException e) {
+            guildId = event.getAuthor().getId();
+        }
+        try (ClosableEntity<? extends GuildData> gData = DataManager.guildDataManager.getData(guildId)) {
             GuildData guildData = gData.getData();
             for (CustomResponseData data : guildData.getCustomResponses()) {
                 if (messageContentLower.contains(data.getTrigger())) {
