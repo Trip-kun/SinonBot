@@ -15,6 +15,7 @@ public abstract class GuildData extends AccessibleDataEntity{
     public abstract void setCurrencyEnabled(@NotNull Boolean currencyEnabled);
     public abstract @NotNull Boolean isTestingEnabled();
     public abstract void setTestingEnabled(@NotNull Boolean testingEnabled);
-    public abstract @NotNull Collection<? extends CustomCommandData> getCustomCommands();
     public abstract @NotNull Collection<? extends CustomResponseData> getCustomResponses();
+    public abstract void addCustomResponse(CustomResponseData data);
+    public abstract void removeCustomResponse(CustomResponseData data);
 }

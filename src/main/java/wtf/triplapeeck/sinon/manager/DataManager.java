@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class DataManager<T extends AccessibleDataEntity> implements Runnable {
     public static DataManager<? extends ChannelData> channelDataManager;
     public static DataManager<? extends ChannelMemberData> channelMemberDataManager;
-    public static DataManager<? extends CustomCommandData> customCommandDataManager;
     public static DataManager<? extends CustomResponseData> customResponseDataManager;
     public static DataManager<? extends DeckCardData> deckCardDataManager;
     public static DataManager<? extends GuildData> guildDataManager;

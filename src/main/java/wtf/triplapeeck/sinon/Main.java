@@ -29,7 +29,6 @@ public class Main {
         ORMLiteDatabaseUtil.init();
         DataManager.channelDataManager = new ORMLiteManager<>(ORMLiteChannelData.class);
         DataManager.channelMemberDataManager = new ORMLiteManager<>(ORMLiteChannelMemberData.class);
-        DataManager.customCommandDataManager = new ORMLiteManager<>(ORMLiteCustomCommandData.class);
         DataManager.customResponseDataManager = new ORMLiteManager<>(ORMLiteCustomResponseData.class);
         DataManager.deckCardDataManager = new ORMLiteManager<>(ORMLiteDeckCardData.class);
         DataManager.guildDataManager = new ORMLiteManager<>(ORMLiteGuildData.class);
@@ -41,7 +40,6 @@ public class Main {
         DataManager.userDataManager = new ORMLiteManager<>(ORMLiteUserData.class);
         ThreadManager.getInstance().addThread("ChannelDataManager", new Thread(DataManager.channelDataManager));
         ThreadManager.getInstance().addThread("ChannelMemberDataManager", new Thread(DataManager.channelMemberDataManager));
-        ThreadManager.getInstance().addThread("CustomCommandDataManager", new Thread(DataManager.customCommandDataManager));
         ThreadManager.getInstance().addThread("CustomResponseDataManager", new Thread(DataManager.customResponseDataManager));
         ThreadManager.getInstance().addThread("DeckCardDataManager", new Thread(DataManager.deckCardDataManager));
         ThreadManager.getInstance().addThread("GuildDataManager", new Thread(DataManager.guildDataManager));

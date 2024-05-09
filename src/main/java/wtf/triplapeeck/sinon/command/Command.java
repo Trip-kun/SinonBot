@@ -1,6 +1,8 @@
 package wtf.triplapeeck.sinon.command;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -13,10 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import wtf.triplapeeck.sinon.Config;
 import wtf.triplapeeck.sinon.Logger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -60,7 +59,8 @@ public abstract class Command {
                 }
             }
         }
-        jda.upsertCommand(data).queue();
+        jda.upsertCommand(data).complete();
+
     }
     public enum CommandCategory {
         ESSENTIAL("Essential", 1, "Essential commands for the bot"),
@@ -424,6 +424,16 @@ public abstract class Command {
         if (arguments.isEmpty()) {
             throw new IllegalArgumentException("Command must have at least one argument");
         }
-        return arguments.get(0);
+        return arguments.getFirst();
+    }
+    public boolean isAdministrator(Member member) {
+        return member.hasPermission(Permission.ADMINISTRATOR);
+    }
+    public Optional<String> ensureAdministrator(Member member) {
+        if (isAdministrator(member)) {
+            return Optional.empty();
+        } else {
+            return Optional.of("You must be an administrator to use this command!");
+        }
     }
 }

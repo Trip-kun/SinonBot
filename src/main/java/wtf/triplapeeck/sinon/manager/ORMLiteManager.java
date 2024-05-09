@@ -23,9 +23,10 @@ public class ORMLiteManager<T extends AccessibleDataEntity> extends DataManager<
     }
     @Override
     protected T getRawData(String id) {
-        T data;
-        data = dao.getEntity(id);
-        if (data ==null) {
+        T data = null;
+        if (id!=null)
+            data = dao.getEntity(id);
+        if (data == null) {
             try {
                 data = entityClass.getDeclaredConstructor(String.class).newInstance(id);
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

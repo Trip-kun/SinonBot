@@ -14,7 +14,6 @@ public class ORMLiteDatabaseUtil {
     private static JdbcPooledConnectionSource connectionSource;
     private static ORMEntityDao<ORMLiteChannelData> channelDataDao;
     private static ORMEntityDao<ORMLiteChannelMemberData> channelMemberDao;
-    private static ORMEntityDao<ORMLiteCustomCommandData> customCommandDao;
     private static ORMEntityDao<ORMLiteCustomResponseData> customResponseDao;
     private static ORMEntityDao<ORMLiteDeckCardData> deckCardDao;
     private static ORMEntityDao<ORMLiteGuildData> guildDao;
@@ -30,9 +29,6 @@ public class ORMLiteDatabaseUtil {
         }
         if (c==ORMLiteChannelMemberData.class) {
             return channelMemberDao;
-        }
-        if (c==ORMLiteCustomCommandData.class) {
-            return customCommandDao;
         }
         if (c==ORMLiteCustomResponseData.class) {
             return customResponseDao;
@@ -83,7 +79,6 @@ public class ORMLiteDatabaseUtil {
         connectionSource.setMaxConnectionsFree(config.maxConnections);
         channelDataDao = new ORMEntityDao<>(ORMLiteChannelData.class, connectionSource);
         channelMemberDao = new ORMEntityDao<>(ORMLiteChannelMemberData.class, connectionSource);
-        customCommandDao = new ORMEntityDao<>(ORMLiteCustomCommandData.class, connectionSource);
         customResponseDao = new ORMEntityDao<>(ORMLiteCustomResponseData.class, connectionSource);
         deckCardDao = new ORMEntityDao<>(ORMLiteDeckCardData.class, connectionSource);
         guildDao = new ORMEntityDao<>(ORMLiteGuildData.class, connectionSource);

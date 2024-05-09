@@ -5,7 +5,6 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import wtf.triplapeeck.sinon.entity.CustomCommandData;
 import wtf.triplapeeck.sinon.entity.CustomResponseData;
 import wtf.triplapeeck.sinon.entity.GuildData;
 
@@ -25,8 +24,6 @@ public class ORMLiteGuildData extends GuildData {
     @DatabaseField(canBeNull = false)
     private @NotNull Boolean testingEnabled;
     @ForeignCollectionField(eager = true)
-    private @NotNull Collection<ORMLiteCustomCommandData> customCommands;
-    @ForeignCollectionField(eager = true)
     private @NotNull Collection<ORMLiteCustomResponseData> customResponses;
     @Override
     public void load() {
@@ -37,7 +34,6 @@ public class ORMLiteGuildData extends GuildData {
         this.starboardThreshold = 2;
         this.currencyEnabled = true;
         this.testingEnabled = false;
-        customCommands= new ArrayList<>();
         customResponses = new ArrayList<>();
     }
     public ORMLiteGuildData() {} // For ORMLite
@@ -60,13 +56,16 @@ public class ORMLiteGuildData extends GuildData {
     }
     @NotNull
     @Override
-    public Collection<? extends CustomCommandData> getCustomCommands() {
-        return customCommands;
-    }
-    @NotNull
-    @Override
     public Collection<? extends CustomResponseData> getCustomResponses() {
         return customResponses;
+    }
+    @Override
+    public void addCustomResponse(CustomResponseData data) {
+        this.customResponses.add((ORMLiteCustomResponseData) data);
+    }
+    @Override
+    public void removeCustomResponse(CustomResponseData data) {
+        this.customResponses.remove((ORMLiteCustomResponseData) data);
     }
     @Override
     public void setStarboardChannelID(@Nullable String starboardChannelID) {
