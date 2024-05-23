@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import wtf.triplapeeck.sinon.entity.CustomResponseData;
 import wtf.triplapeeck.sinon.entity.GuildData;
+import wtf.triplapeeck.sinon.entity.StarboardEntryData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,8 @@ public class ORMLiteGuildData extends GuildData {
     private @NotNull Boolean testingEnabled;
     @ForeignCollectionField(eager = true)
     private @NotNull Collection<ORMLiteCustomResponseData> customResponses;
+    @ForeignCollectionField(eager = true)
+    private @NotNull Collection<ORMLiteStarboardEntryData> starboardEntries;
     @Override
     public void load() {
 
@@ -59,6 +62,13 @@ public class ORMLiteGuildData extends GuildData {
     public Collection<? extends CustomResponseData> getCustomResponses() {
         return customResponses;
     }
+
+    @NotNull
+    @Override
+    public Collection<? extends StarboardEntryData> getStarboardEntries() {
+        return starboardEntries;
+    }
+
     @Override
     public void addCustomResponse(CustomResponseData data) {
         this.customResponses.add((ORMLiteCustomResponseData) data);
@@ -67,6 +77,17 @@ public class ORMLiteGuildData extends GuildData {
     public void removeCustomResponse(CustomResponseData data) {
         this.customResponses.remove((ORMLiteCustomResponseData) data);
     }
+
+    @Override
+    public void addStarboardEntry(StarboardEntryData data) {
+        this.starboardEntries.add((ORMLiteStarboardEntryData) data);
+    }
+
+    @Override
+    public void removeStarboardEntry(StarboardEntryData data) {
+        this.starboardEntries.remove((ORMLiteStarboardEntryData) data);
+    }
+
     @Override
     public void setStarboardChannelID(@Nullable String starboardChannelID) {
         this.starboardChannelID = starboardChannelID;

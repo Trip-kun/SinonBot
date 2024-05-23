@@ -4,6 +4,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveAllEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEmojiEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import wtf.triplapeeck.sinon.Config;
@@ -70,6 +74,42 @@ public class CommandHandler {
                 consumer.handleEvent(event, jda);
             } catch (RuntimeException e) {
                 event.getHook().sendMessage(Config.getConfig().errorResponseString + ". The following error occurred: " + e.getMessage()).queue();
+            }
+        }
+    }
+    public void handle(@NotNull MessageReactionAddEvent event, @NotNull JDA jda) {
+        for (EventConsumer consumer : consumers) {
+            try {
+                consumer.handleEvent(event, jda);
+            } catch (DatabaseException e) {
+                event.getChannel().sendMessage(Config.getConfig().errorResponseString + ". The following error occurred: " + e.getMessage()).queue();
+            }
+        }
+    }
+    public void handle(@NotNull MessageReactionRemoveEvent event, @NotNull JDA jda) {
+        for (EventConsumer consumer : consumers) {
+            try {
+                consumer.handleEvent(event, jda);
+            } catch (DatabaseException e) {
+                event.getChannel().sendMessage(Config.getConfig().errorResponseString + ". The following error occurred: " + e.getMessage()).queue();
+            }
+        }
+    }
+    public void handle(@NotNull MessageReactionRemoveAllEvent event, @NotNull JDA jda) {
+        for (EventConsumer consumer : consumers) {
+            try {
+                consumer.handleEvent(event, jda);
+            } catch (DatabaseException e) {
+                event.getChannel().sendMessage(Config.getConfig().errorResponseString + ". The following error occurred: " + e.getMessage()).queue();
+            }
+        }
+    }
+    public void handle(@NotNull MessageReactionRemoveEmojiEvent event, @NotNull JDA jda) {
+        for (EventConsumer consumer : consumers) {
+            try {
+                consumer.handleEvent(event, jda);
+            } catch (DatabaseException e) {
+                event.getChannel().sendMessage(Config.getConfig().errorResponseString + ". The following error occurred: " + e.getMessage()).queue();
             }
         }
     }

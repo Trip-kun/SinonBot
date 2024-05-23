@@ -4,6 +4,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveAllEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEmojiEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import wtf.triplapeeck.sinon.command.EventConsumer;
 import wtf.triplapeeck.sinon.entity.ClosableEntity;
 import wtf.triplapeeck.sinon.entity.GuildData;
@@ -15,6 +19,8 @@ import java.math.BigInteger;
 import java.util.Random;
 
 public class RakUpdateConsumer extends EventConsumer {
+    public RakUpdateConsumer() {
+    }
     private final Random random = new Random();
     @Override
     public void handleEvent(MessageReceivedEvent event, JDA jda) {
@@ -51,6 +57,26 @@ public class RakUpdateConsumer extends EventConsumer {
 
     @Override // This method is not implemented
     public void handleEvent(SlashCommandInteractionEvent event, JDA jda) {
+
+    }
+
+    @Override
+    public void handleEvent(MessageReactionAddEvent event, JDA jda) {
+
+    }
+
+    @Override
+    public void handleEvent(MessageReactionRemoveEvent event, JDA jda) {
+
+    }
+
+    @Override
+    public void handleEvent(MessageReactionRemoveAllEvent event, JDA jda) {
+
+    }
+
+    @Override
+    public void handleEvent(MessageReactionRemoveEmojiEvent event, JDA jda) {
 
     }
 }

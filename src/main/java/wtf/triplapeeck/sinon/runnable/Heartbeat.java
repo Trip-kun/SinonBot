@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Heartbeat implements Runnable{
-    private static AtomicBoolean inject = new AtomicBoolean(false);
+    private static final AtomicBoolean inject = new AtomicBoolean(false);
     private static final Heartbeat instance = new Heartbeat();
     private static final ArrayList<ClosableEntity<? extends ReminderData>> reminders = new ArrayList<>();
     private static ArrayList<ClosableEntity<? extends ReminderData>> temp = new ArrayList<>();

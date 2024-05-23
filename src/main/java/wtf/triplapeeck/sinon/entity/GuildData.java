@@ -16,6 +16,9 @@ public abstract class GuildData extends AccessibleDataEntity{
     public abstract @NotNull Boolean isTestingEnabled();
     public abstract void setTestingEnabled(@NotNull Boolean testingEnabled);
     public abstract @NotNull Collection<? extends CustomResponseData> getCustomResponses();
+    public abstract @NotNull Collection<? extends StarboardEntryData> getStarboardEntries();
     public abstract void addCustomResponse(CustomResponseData data);
     public abstract void removeCustomResponse(CustomResponseData data);
+    public abstract void addStarboardEntry(StarboardEntryData data);
+    public abstract void removeStarboardEntry(StarboardEntryData data);
 }

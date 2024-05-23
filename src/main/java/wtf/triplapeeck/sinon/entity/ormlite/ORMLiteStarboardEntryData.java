@@ -7,16 +7,18 @@ import wtf.triplapeeck.sinon.entity.GuildData;
 import wtf.triplapeeck.sinon.entity.StarboardEntryData;
 @DatabaseTable(tableName = "oatmeal_starboard_entries")
 public class ORMLiteStarboardEntryData extends StarboardEntryData {
-    @DatabaseField(generatedId = true)
-    private @NotNull Integer id;
-    @DatabaseField(canBeNull=false)
+    @DatabaseField(id = true, canBeNull = false)
     private @NotNull String originalMessageID;
     @DatabaseField(canBeNull=false)
     private @NotNull String starboardMessageID;
     @DatabaseField(canBeNull=false, foreign = true, foreignAutoRefresh = true)
     private @NotNull ORMLiteGuildData guild;
-    public ORMLiteStarboardEntryData() {}
-    public ORMLiteStarboardEntryData(String ignored) {}
+    public ORMLiteStarboardEntryData() {
+    }
+    public ORMLiteStarboardEntryData(@NotNull String ignored) {
+        originalMessageID = ignored;
+        starboardMessageID="";
+    }
     @Override
     public @NotNull String getOriginalMessageID() {
         return originalMessageID;
@@ -43,7 +45,7 @@ public class ORMLiteStarboardEntryData extends StarboardEntryData {
     }
     @Override
     public @NotNull String getID() {
-        return String.valueOf(id);
+        return originalMessageID;
     }
     @Override
     public void load() {

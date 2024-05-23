@@ -414,7 +414,7 @@ public abstract class Command {
                 }
             }
         }
-        return parseArguments(s,attachments, roles, channels, users);
+        return parseArguments(s,attachments, roles, users, channels);
     }
     public abstract void handler(MessageReceivedEvent event, JDA jda);
     public abstract void handler(SlashCommandInteractionEvent event, JDA jda);
@@ -426,14 +426,34 @@ public abstract class Command {
         }
         return arguments.getFirst();
     }
-    public boolean isAdministrator(Member member) {
+    public static boolean isAdministrator(Member member) {
         return member.hasPermission(Permission.ADMINISTRATOR);
     }
-    public Optional<String> ensureAdministrator(Member member) {
+    public static Optional<String> ensureAdministrator(Member member) {
         if (isAdministrator(member)) {
             return Optional.empty();
         } else {
             return Optional.of("You must be an administrator to use this command!");
+        }
+    }
+    public static boolean isGuild(MessageReceivedEvent event) {
+        return event.isFromGuild();
+    }
+    public static boolean isGuild(SlashCommandInteractionEvent event) {
+        return event.isFromGuild();
+    }
+    public static Optional<String> ensureGuild(MessageReceivedEvent event) {
+        if (isGuild(event)) {
+            return Optional.empty();
+        } else {
+            return Optional.of("This command can only be used in a server");
+        }
+    }
+    public static Optional<String> ensureGuild(SlashCommandInteractionEvent event) {
+        if (isGuild(event)) {
+            return Optional.empty();
+        } else {
+            return Optional.of("This command can only be used in a server");
         }
     }
 }

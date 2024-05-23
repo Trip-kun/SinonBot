@@ -54,7 +54,7 @@ public class Main {
         SinonListener sinonListener = new SinonListener(commandHandler);
         api = JDABuilder.createLight(Config.getConfig().token)
                 .disableCache(new ArrayList<>(Arrays.asList(CacheFlag.values())))
-                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
+                .enableIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS))
                 .addEventListeners(sinonListener)
                 .build();
         Heartbeat.setJDA(api);
@@ -97,5 +97,6 @@ public class Main {
             api.awaitReady();
         } catch (InterruptedException ignored) {
         }
+        Logger.log(Logger.Level.INFO, "Bot is ready");
     }
 }
