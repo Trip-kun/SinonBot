@@ -189,6 +189,9 @@ public abstract class Command {
     protected ArrayList<ParsedArgument> parseArguments(String messageContent, Collection<Message.Attachment> attachments, Collection<Long> mentionedRoles, Collection<Long> mentionedUsers, Collection<Long> mentionedChannels) throws IllegalArgumentException {
         ArrayList<ParsedArgument> parsedArguments = new ArrayList<>();
         String[] messageParts = messageContent.split("\\s+");
+        if (messageParts.length == 1 && messageParts[0].isEmpty()) {
+            messageParts = new String[]{}; // Empty array fix
+        }
         List<Message.Attachment> attachmentsArray = new ArrayList<>(attachments);
         List<Long> mentionedRolesArray = new ArrayList<>(mentionedRoles);
         List<Long> mentionedUsersArray = new ArrayList<>(mentionedUsers);
